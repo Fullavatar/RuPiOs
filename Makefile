@@ -33,13 +33,13 @@ img: ## Generate the raw Raspberry Pi kernel8.img
 .PHONY: run-elf
 run-elf: ## Run the ELF in QEMU
 	$(MAKE) build
-	$(QEMU) $(QEMU_MACHINE) -kernel "$(ELF)" -display none -serial stdio -monitor none
+	$(QEMU) $(QEMU_MACHINE) -kernel "$(ELF)" -nographic
 
 
 .PHONY: run-img
 run-img: ## Run kernel8.img in QEMU
 	$(MAKE) img
-	$(QEMU) $(QEMU_MACHINE) -kernel "$(IMG)" -display none -serial stdio -monitor none
+	$(QEMU) $(QEMU_MACHINE) -kernel "$(IMG)" -nographic
 
 
 .PHONY: log-elf
