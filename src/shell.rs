@@ -1,4 +1,4 @@
-use crate::{system::{exception, timer}, drivers::uart};
+use crate::{system::{exceptions, timer}, drivers::uart};
 
 const BUFFER_SIZE: usize = 64;
 
@@ -101,7 +101,7 @@ fn sleep() {
 }
 
 fn exception_level() {
-    let level = exception::current_level();
+    let level = exceptions::current_level();
 
     uart::write_fmt(
         format_args!("Exception level : EL{}\r\n", level)
