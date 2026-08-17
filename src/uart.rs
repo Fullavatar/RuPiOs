@@ -8,6 +8,7 @@ const UART_LCRH: *mut u32 = (UART0_BASE + 0x2C) as *mut u32;
 const UART_CR: *mut u32 = (UART0_BASE + 0x30) as *mut u32;
 
 const FR_TXFF: u32 = 1 << 5;
+const FR_RXFE: u32 = 1 << 4;
 
 const CR_UARTEN: u32 = 1 << 0;
 const CR_TXE: u32 = 1 << 8;
@@ -40,5 +41,15 @@ pub fn write_byte(byte: u8) {
 pub fn write_str(text: &str) {
 		for byte in text.bytes() {
 		write_byte(byte);
+	}
+}
+
+pub fn read_byte() -> u8 {
+	unsafe {
+		// Wait while RXE is empty
+		while read_volatile(UART_FR) & FR_RXFE != 0 {}
+
+		// Read the octet and return it
+		read_volatile(UART_DR) as u8
 	}
 }
