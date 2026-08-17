@@ -2,6 +2,7 @@
 #![no_main]
 
 mod uart;
+mod shell;
 
 use core::arch::global_asm;
 use core::panic::PanicInfo;
@@ -36,12 +37,7 @@ _start:
 pub extern "C" fn kernel_main() -> ! {
     uart::init();
     uart::write_str("Welcome to RuPiOs!\n");
-	loop {
-		let byte = uart::read_byte();
-        uart::write_str("Received :");
-        uart::write_byte(byte);
-        uart::write_str("\r\n");
-	}
+    shell::run();
 }
 
 #[panic_handler]
