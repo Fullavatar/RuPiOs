@@ -57,6 +57,8 @@ fn execute(input: &[u8]) {
         timer_frequency();
     } else if input == b"sleep" {
         sleep();
+    } else if input == b"el" {
+        exception_level();
     } else if input.is_empty() {
         // Do nothing
     } else {
@@ -71,6 +73,7 @@ fn help() {
     uart::write_str("  uptime    - Show system uptime\r\n");
     uart::write_str("  timerfreq - Show system timer frequency\r\n");
     uart::write_str("  sleep     - Wait for 1 second\r\n");
+    uart::write_str("  el        - Show current ARM exception level\r\n");
 }
 
 fn about() {
@@ -95,6 +98,14 @@ fn sleep() {
     uart::write_str("Sleeping for 1 second...\r\n");
     timer::sleep_ms(1000);
     uart::write_str("Awake!\r\n");
+}
+
+fn exception_level() {
+    let level = crate::exception::current_level();
+
+    uart::write_fmt(
+        format_args!("Exception level : EL{}\r\n", level)
+    );
 }
 
 fn unknown_command() {
