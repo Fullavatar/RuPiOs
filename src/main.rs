@@ -2,6 +2,7 @@
 #![no_main]
 
 mod uart;
+mod timer;
 mod shell;
 
 use core::arch::global_asm;

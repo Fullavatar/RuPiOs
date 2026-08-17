@@ -1,4 +1,4 @@
-use crate::uart;
+use crate::{timer, uart};
 
 const BUFFER_SIZE: usize = 64;
 
@@ -51,6 +51,12 @@ fn execute(input: &[u8]) {
         help();
     } else if input == b"about" {
         about();
+    } else if input == b"uptime" {
+        uptime();
+    } else if input == b"timerfreq" {
+        timer_frequency();
+    } else if input == b"sleep" {
+        sleep();
     } else if input.is_empty() {
         // Do nothing
     } else {
@@ -60,14 +66,35 @@ fn execute(input: &[u8]) {
 
 fn help() {
     uart::write_str("Available commands:\r\n");
-    uart::write_str("  help   - Show this help\r\n");
-    uart::write_str("  about  - Show RuPiOs information\r\n");
+    uart::write_str("  help      - Show this help\r\n");
+    uart::write_str("  about     - Show RuPiOs information\r\n");
+    uart::write_str("  uptime    - Show system uptime\r\n");
+    uart::write_str("  timerfreq - Show system timer frequency\r\n");
+    uart::write_str("  sleep     - Wait for 1 second\r\n");
 }
 
 fn about() {
     uart::write_str("RuPiOs v");
     uart::write_str(env!("CARGO_PKG_VERSION"));
     uart::write_str(" - Rust Raspberry Pi OS\r\n");
+}
+
+fn uptime() {
+    let seconds = timer::uptime_seconds();
+
+    uart::write_fmt(format_args!("Uptime : {} seconds\r\n", seconds));
+}
+
+fn timer_frequency() {
+    let hertz = timer::frequency();
+
+    uart::write_fmt(format_args!("Timer frequency : {} Hz\r\n", hertz));
+}
+
+fn sleep() {
+    uart::write_str("Sleeping for 1 second...\r\n");
+    timer::sleep_ms(1000);
+    uart::write_str("Awake!\r\n");
 }
 
 fn unknown_command() {
