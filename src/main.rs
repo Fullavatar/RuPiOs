@@ -4,6 +4,7 @@
 mod uart;
 mod timer;
 mod shell;
+mod exception;
 
 use core::arch::global_asm;
 use core::panic::PanicInfo;
