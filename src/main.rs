@@ -35,7 +35,7 @@ _start:
 #[unsafe(no_mangle)]
 pub extern "C" fn kernel_main() -> ! {
     uart::init();
-    uart::write_str("Welcome to RuPi OS!\n");
+    uart::write_str("Welcome to RuPiOs!\n");
 	loop {
 		core::hint::spin_loop();
 	}
