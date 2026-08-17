@@ -1,10 +1,9 @@
 #![no_std]
 #![no_main]
 
-mod uart;
-mod timer;
+mod drivers;
+mod system;
 mod shell;
-mod exception;
 
 use core::arch::global_asm;
 use core::panic::PanicInfo;
@@ -37,8 +36,8 @@ _start:
 
 #[unsafe(no_mangle)]
 pub extern "C" fn kernel_main() -> ! {
-    uart::init();
-    uart::write_str("Welcome to RuPiOs!\n");
+    drivers::uart::init();
+    drivers::uart::write_str("Welcome to RuPiOs!\n");
     shell::run();
 }
 

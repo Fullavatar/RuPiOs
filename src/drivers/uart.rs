@@ -59,7 +59,7 @@ struct UartWriter;
 
 impl Write for UartWriter {
 	fn write_str(&mut self, text: &str) -> fmt::Result {
-		crate::uart::write_str(text);
+		write_str(text);
 		Ok(())
 	}
 }
