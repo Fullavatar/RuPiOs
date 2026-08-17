@@ -159,6 +159,7 @@ exception_halt_sync_current_spx:
     b exception_halt
 
 exception_irq_current_spx:
+    bl irq_handler
     b exception_halt
 
 exception_halt:
