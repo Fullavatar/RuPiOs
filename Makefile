@@ -21,7 +21,7 @@ build: ## Build the AArch64 bare-metal ELF
 .PHONY: clean
 clean: ## Remove Cargo build artifacts and generated files
 	cargo clean
-	powershell -NoProfile -Command "Remove-Item -Force -ErrorAction SilentlyContinue '$(IMG)', '$(LOG_ELF)', '$(LOG_RAW)'"
+	powershell -NoProfile -Command "$$files = @('$(IMG)', '$(LOG_ELF)', '$(LOG_RAW)'); $$files | Where-Object { Test-Path $$_ } | Remove-Item -Force"
 
 
 .PHONY: img
