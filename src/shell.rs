@@ -59,6 +59,8 @@ fn execute(input: &[u8]) {
         sleep();
     } else if input == b"el" {
         exception_level();
+    } else if input == b"fault" {
+        fault();
     } else if input.is_empty() {
         // Do nothing
     } else {
@@ -74,6 +76,7 @@ fn help() {
     uart::write_str("  timerfreq - Show system timer frequency\r\n");
     uart::write_str("  sleep     - Wait for 1 second\r\n");
     uart::write_str("  el        - Show current ARM exception level\r\n");
+    uart::write_str("  fault     - Trigger a test exception\r\n");
 }
 
 fn about() {
@@ -106,6 +109,12 @@ fn exception_level() {
     uart::write_fmt(
         format_args!("Exception level : EL{}\r\n", level)
     );
+}
+
+fn fault() {
+    uart::write_str("Triggering undefined instruction...\r\n");
+
+    exceptions::trigger_undefined_instruction()
 }
 
 fn unknown_command() {
