@@ -1,4 +1,5 @@
 use core::ptr::{read_volatile, write_volatile};
+use core::fmt::{self, Write};
 
 const UART0_BASE: usize = 0xFE20_1000;
 
@@ -52,4 +53,18 @@ pub fn read_byte() -> u8 {
 		// Read the octet and return it
 		read_volatile(UART_DR) as u8
 	}
+}
+
+struct UartWriter;
+
+impl Write for UartWriter {
+	fn write_str(&mut self, text: &str) -> fmt::Result {
+		crate::uart::write_str(text);
+		Ok(())
+	}
+}
+
+pub fn write_fmt(args: fmt::Arguments<'_>) {
+	let mut writer = UartWriter;
+	let _ = writer.write_fmt(args);
 }
