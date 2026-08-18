@@ -69,6 +69,8 @@ fn execute(input: &[u8]) {
         timer_status();
     } else if input == b"irqon" {
         enable_irq();
+    } else if input == b"irqcount" {
+        irq_count();
     } else if input.is_empty() {
         // Do nothing
     } else {
@@ -177,6 +179,12 @@ fn timer_status() {
 fn enable_irq() {
     uart::write_str("Enabling CPU interrupts...\r\n");
     interrupts::enable_irq();
+}
+
+fn irq_count() {
+    let count = timer::interrupt_count();
+
+    uart::write_fmt(format_args!("Timer interrupts : {}\r\n", count));
 }
 
 fn unknown_command() {

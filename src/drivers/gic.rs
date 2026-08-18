@@ -19,6 +19,8 @@ const GICC_PMR: *mut u32 = (GICC_BASE + 0x004) as *mut u32;
 
 const GICC_IAR: *const u32 = (GICC_BASE + 0x00C) as *const u32;
 
+const GICC_EOIR: *mut u32 = (GICC_BASE + 0x010) as *mut u32;
+
 
 const TIMER_PPI_ID: u32 = 30;
 const TIMER_PPI_MASK: u32 = 1 << TIMER_PPI_ID;
@@ -91,5 +93,11 @@ pub fn interrupt_id(iar: u32) -> u32 {
 pub fn typer() -> u32 {
     unsafe {
         read_volatile(GICD_TYPER)
+    }
+}
+
+pub fn end_interrupt(iar: u32) {
+    unsafe {
+        write_volatile(GICC_EOIR, iar);
     }
 }

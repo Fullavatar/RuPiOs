@@ -1,4 +1,6 @@
-use core::arch::asm;
+use core::{arch::asm, sync::atomic::{AtomicU64, Ordering}};
+
+static INTERRUPT_COUNT: AtomicU64 = AtomicU64::new(0);
 
 pub fn frequency() -> u64 {
     let value: u64;
@@ -67,4 +69,23 @@ pub fn interrupt_control() -> u64 {
 
 pub fn interrupt_pending() -> bool {
     interrupt_control() & (1 << 2) != 0
+}
+
+pub fn handle_interrupt() {
+    INTERRUPT_COUNT.fetch_add(1, Ordering::Relaxed);
+
+    schedule_interrupt_ms(1000);
+}
+
+pub fn interrupt_count() -> u64 {
+    INTERRUPT_COUNT.load(Ordering::Relaxed)
+}
+
+pub fn disable_interrupt() {
+    unsafe {
+        core::arch::asm!(
+            "msr cntp_ctl_el0, xzr",
+            "isb",
+        );
+    }
 }

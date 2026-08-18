@@ -1,5 +1,5 @@
 use core::arch::asm;
-use crate::drivers::{gic, uart};
+use crate::{drivers::{gic, uart}, system::timer};
 
 #[unsafe(no_mangle)]
 pub extern "C" fn exception_handler(esr: u64, elr: u64, far: u64) -> ! {
@@ -29,10 +29,11 @@ pub extern "C" fn irq_handler() {
     let iar = gic::acknowledge_interrupt();
     let id = gic::interrupt_id(iar);
 
-    uart::write_str("\r\n--- RuPiOs IRQ ---\r\n");
-    uart::write_fmt(format_args!("GIC IAR : {:#010x}\r\n", iar));
-    uart::write_fmt(format_args!("INTID : {}\r\n", id));
-    uart::write_str("System halted.\r\n");
+    if id == 30 {
+        timer::handle_interrupt();
+    }
+
+    gic::end_interrupt(iar);
 }
 
 pub fn trigger_undefined_instruction() -> ! {
