@@ -1,3 +1,5 @@
 /target/
 /kernel8.img
 /qemu*.log
+
+/Makefile

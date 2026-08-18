@@ -11,6 +11,8 @@ use core::panic::PanicInfo;
 #[unsafe(no_mangle)]
 pub extern "C" fn kernel_main() -> ! {
     drivers::uart::init();
+    drivers::gic::init();
+
     drivers::uart::write_str("Welcome to RuPiOs!\n");
     shell::run();
 }

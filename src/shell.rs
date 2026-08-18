@@ -1,4 +1,4 @@
-use crate::{system::{exceptions, timer}, drivers::uart};
+use crate::{drivers::{gic, uart}, system::{exceptions, interrupts, timer}};
 
 const BUFFER_SIZE: usize = 64;
 
@@ -61,6 +61,16 @@ fn execute(input: &[u8]) {
         exception_level();
     } else if input == b"fault" {
         fault();
+    } else if input == b"gic" {
+        gic_info();
+    } else if input == b"timerirq" {
+        timer_irq();
+    } else if input == b"timerstatus" {
+        timer_status();
+    } else if input == b"irqon" {
+        enable_irq();
+    } else if input == b"irqcount" {
+        irq_count();
     } else if input.is_empty() {
         // Do nothing
     } else {
@@ -77,6 +87,7 @@ fn help() {
     uart::write_str("  sleep     - Wait for 1 second\r\n");
     uart::write_str("  el        - Show current ARM exception level\r\n");
     uart::write_str("  fault     - Trigger a test exception\r\n");
+    uart::write_str("  gic       - Show gic info\r\n");
 }
 
 fn about() {
@@ -115,6 +126,65 @@ fn fault() {
     uart::write_str("Triggering undefined instruction...\r\n");
 
     exceptions::trigger_undefined_instruction()
+}
+
+fn gic_info() {
+    let typer = crate::drivers::gic::typer();
+    let dist = crate::drivers::gic::distributor_control();
+    let cpu = crate::drivers::gic::cpu_control();
+    let timer_group1 = crate::drivers::gic::timer_ppi_is_group1();
+    let timer_enabled = crate::drivers::gic::timer_ppi_enabled();
+
+    uart::write_fmt(format_args!("GICD_TYPER : {:#010x}\r\n", typer));
+
+    uart::write_fmt(format_args!("GICD_CTLR  : {:#010x}\r\n", dist));
+
+    uart::write_fmt(format_args!("GICC_CTLR  : {:#010x}\r\n", cpu));
+
+    uart::write_fmt(format_args!("Timer PPI group 1 : {}\r\n", timer_group1));
+
+    uart::write_fmt(format_args!("Timer PPI enabled : {}\r\n", timer_enabled));
+
+}
+
+fn timer_irq() {
+    timer::schedule_interrupt_ms(1000);
+
+    uart::write_str(
+        "Timer IRQ scheduled in 1 second (CPU IRQ still masked)\r\n"
+    );
+}
+
+fn timer_status() {
+    let control = timer::interrupt_control();
+    let timer_pending = timer::interrupt_pending();
+    let gic_pending = gic::timer_ppi_pending();
+
+    uart::write_fmt(format_args!(
+        "CNTP_CTL_EL0       : {:#010x}\r\n",
+        control
+    ));
+
+    uart::write_fmt(format_args!(
+        "Timer condition    : {}\r\n",
+        timer_pending
+    ));
+
+    uart::write_fmt(format_args!(
+        "GIC PPI 30 pending : {}\r\n",
+        gic_pending
+    ));
+}
+
+fn enable_irq() {
+    uart::write_str("Enabling CPU interrupts...\r\n");
+    interrupts::enable_irq();
+}
+
+fn irq_count() {
+    let count = timer::interrupt_count();
+
+    uart::write_fmt(format_args!("Timer interrupts : {}\r\n", count));
 }
 
 fn unknown_command() {

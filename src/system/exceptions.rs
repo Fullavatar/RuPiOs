@@ -1,5 +1,5 @@
 use core::arch::asm;
-use crate::drivers::uart;
+use crate::{drivers::{gic, uart}, system::timer};
 
 #[unsafe(no_mangle)]
 pub extern "C" fn exception_handler(esr: u64, elr: u64, far: u64) -> ! {
@@ -22,6 +22,18 @@ pub extern "C" fn exception_handler(esr: u64, elr: u64, far: u64) -> ! {
     loop {
         core::hint::spin_loop();
     }
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn irq_handler() {
+    let iar = gic::acknowledge_interrupt();
+    let id = gic::interrupt_id(iar);
+
+    if id == 30 {
+        timer::handle_interrupt();
+    }
+
+    gic::end_interrupt(iar);
 }
 
 pub fn trigger_undefined_instruction() -> ! {
