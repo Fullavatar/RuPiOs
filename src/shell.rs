@@ -80,14 +80,18 @@ fn execute(input: &[u8]) {
 
 fn help() {
     uart::write_str("Available commands:\r\n");
-    uart::write_str("  help      - Show this help\r\n");
-    uart::write_str("  about     - Show RuPiOs information\r\n");
-    uart::write_str("  uptime    - Show system uptime\r\n");
-    uart::write_str("  timerfreq - Show system timer frequency\r\n");
-    uart::write_str("  sleep     - Wait for 1 second\r\n");
-    uart::write_str("  el        - Show current ARM exception level\r\n");
-    uart::write_str("  fault     - Trigger a test exception\r\n");
-    uart::write_str("  gic       - Show gic info\r\n");
+    uart::write_str("  help        - Show this help\r\n");
+    uart::write_str("  about       - Show RuPiOs information\r\n");
+    uart::write_str("  uptime      - Show system uptime\r\n");
+    uart::write_str("  timerfreq   - Show system timer frequency\r\n");
+    uart::write_str("  sleep       - Wait for 1 second\r\n");
+    uart::write_str("  el          - Show current ARM exception level\r\n");
+    uart::write_str("  fault       - Trigger a test exception\r\n");
+    uart::write_str("  gic         - Show gic info\r\n");
+    uart::write_str("  timerirq    - Start a IRQ timer\r\n");
+    uart::write_str("  timerstatus - Show the IRQ timer's info\r\n");
+    uart::write_str("  irqon       - Enable CPU interruptions\r\n");
+    uart::write_str("  irqcount    - Show the number of IRQ the CPU handled\r\n");
 }
 
 fn about() {
@@ -151,7 +155,7 @@ fn timer_irq() {
     timer::schedule_interrupt_ms(1000);
 
     uart::write_str(
-        "Timer IRQ scheduled in 1 second (CPU IRQ still masked)\r\n"
+        "Timer IRQ scheduled in 1 second\r\n"
     );
 }
 

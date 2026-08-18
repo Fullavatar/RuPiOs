@@ -22,7 +22,7 @@ const GICC_IAR: *const u32 = (GICC_BASE + 0x00C) as *const u32;
 const GICC_EOIR: *mut u32 = (GICC_BASE + 0x010) as *mut u32;
 
 
-const TIMER_PPI_ID: u32 = 30;
+pub const TIMER_PPI_ID: u32 = 30;
 const TIMER_PPI_MASK: u32 = 1 << TIMER_PPI_ID;
 
 

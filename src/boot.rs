@@ -30,7 +30,7 @@ primary_core:
     b.eq boot_from_el2
 
     cmp x0, #1
-    b.eq boot_continue
+    b.eq el1_entry
 
     b boot_error
 

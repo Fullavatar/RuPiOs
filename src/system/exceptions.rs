@@ -29,7 +29,7 @@ pub extern "C" fn irq_handler() {
     let iar = gic::acknowledge_interrupt();
     let id = gic::interrupt_id(iar);
 
-    if id == 30 {
+    if id == gic::TIMER_PPI_ID {
         timer::handle_interrupt();
     }
 
